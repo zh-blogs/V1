@@ -2,7 +2,6 @@
 
 namespace app\middleware;
 
-use common\Ip;
 use Webman\MiddlewareInterface;
 use Webman\Http\{Response, Request};
 
