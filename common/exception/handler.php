@@ -1,13 +1,13 @@
 <?php
 
-namespace support\exception;
+namespace common\exception;
 
 use Throwable;
 use Psr\Log\LoggerInterface;
 
 /**
  * Class Handler
- * @package support\exception
+ * @package common\exception
  */
 class Handler implements \Webman\Exception\ExceptionHandlerInterface
 {
@@ -15,11 +15,6 @@ class Handler implements \Webman\Exception\ExceptionHandlerInterface
      * @var LoggerInterface
      */
     protected $_logger = null;
-
-    /**
-     * @var bool
-     */
-    protected $_debug = false;
 
     /**
      * @var array
@@ -57,9 +52,8 @@ class Handler implements \Webman\Exception\ExceptionHandlerInterface
      */
     public function render(\webman\Http\Request $request, Throwable $exception): \Webman\Http\Response
     {
-        $code = $exception->getCode();
-        $json = ['code' => $code ? $code : 500, 'msg' => "Server internal error", 'data' => []];
-        if ($this->_debug) $json['err'] =  nl2br((string)$exception);
+        $json = ['code' => -1, 'msg' => "Server internal error", 'data' => []];
+        if (config('app.debug', false)) $json['err'] =  nl2br((string)$exception);
         print_r(Date("Y-m-d H:i:s") . ' ERROR > ' . PHP_EOL . $exception . PHP_EOL);
         return json($json);
     }

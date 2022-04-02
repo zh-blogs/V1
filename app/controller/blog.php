@@ -17,6 +17,12 @@ class Blog
      */
     public function list(Request $request): Response
     {
-        return api();
+        $page  = $request->input('page', 1);  // 每页显示条数
+        $limit = $request->input('limit', 10);  // 偏移量
+        $search = $request->input('search', ''); // 搜索关键字
+
+        $data = Db::table('blogs')->select('*')->forPage($page, $limit)->whereRaw("MATCH (hobbies) AGAINST ('soccer' IN BOOLEAN MODE)")->get();
+
+        return api(data: $data);
     }
 }

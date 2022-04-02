@@ -2,5 +2,5 @@
 
 
 return [
-    '' => support\exception\Handler::class,
+    '' => common\exception\handler::class,
 ];
