@@ -28,7 +28,7 @@ class Blog
         if ($page < 1 || $limit < 1) {
             return api(-1, '参数错误');
         }
-        if ($limit > 100) $limit = 100;
+        if ($limit > 30) $limit = 30;
 
         // get count
         $countSql = Db::table('blogs');
@@ -51,9 +51,12 @@ class Blog
             $item->tags = implode(',', BlogHelper::getTagByBlogId($item->id));
         }
 
+        $pages = ceil($count / $limit);
+
         return api(data: [
+            'pages' => $pages,
+            'count' => $count,
             'data' => $data,
-            'count' => $count
         ]);
     }
 }
