@@ -22,6 +22,14 @@ class Blog
         $limit  = $request->input('limit', 10);  // 偏移量
         $search = $request->input('search', ''); // 搜索关键字
 
+        if (!is_numeric($page) || !is_numeric($limit)) {
+            return api(-1, '参数错误');
+        }
+        if ($page < 1 || $limit < 1) {
+            return api(-1, '参数错误');
+        }
+        if ($limit > 100) $limit = 100;
+
         // get count
         $countSql = Db::table('blogs');
         if ($search !== '') {
