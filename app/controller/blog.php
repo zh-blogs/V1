@@ -1,14 +1,13 @@
 <?php
 
-namespace  Blogs\Controller;
+namespace app\controller;
 
 use Webman\Http\Request;
 use Webman\Http\Response;
 use Support\Db;
 
-class Get
+class Blog
 {
-
 
     /**
      * 获取博客列表
