@@ -18,7 +18,7 @@ class AccessControl implements MiddlewareInterface
         $response->withHeaders([
             'Access-Control-Allow-Origin' => '*',
             'Content-Type' => "Application/json; charset=utf-8",
-            'Server' => 'zhblog'
+            'Server' => getenv('SERVER_NAME', 'zhblogs'),
         ]);
 
         return $response;

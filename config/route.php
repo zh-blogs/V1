@@ -3,11 +3,13 @@
 use Webman\Http\Request;
 use Webman\Route;
 
-
 // 404 Route
 Route::fallback(function (Request $request) {
     return api(
         404,
         'Not Found',
-    )->withHeader('Access-Control-Allow-Origin', '*')->withStatus(404);
+    )->withHeaders([
+        'Access-Control-Allow-Origin' =>  '*',
+        'Server' => getenv('SERVER_NAME', 'zhblogs'),
+    ])->withStatus(404);
 });
