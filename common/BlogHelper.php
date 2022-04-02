@@ -17,6 +17,7 @@ class BlogHelper
         $tag_ids = Db::table('tags')->select('tag_id')->where('blog_id', $blogId)->get();
         if (!$tag_ids) return [];
 
+        $tags = [];
         foreach ($tag_ids as $k => $item) {
             $tags[$k] = self::getTagNameByTagId($item->tag_id);
         }
