@@ -51,5 +51,4 @@ class Plugin
         // Plugin.php in webman
         require_once __DIR__ . '/helpers.php';
     }
-
 }
