@@ -22,6 +22,7 @@ class Blog
         $limit  = $request->input('limit', 10);  // 偏移量
         $search = $request->input('search', ''); // 搜索关键字
         $tag    = $request->input('tag', '');    // 标签
+        $tags   = explode(',', $tag);            // tags
 
         if (!is_numeric($page) || !is_numeric($limit)) {
             return api(-1, 'invlid params');
@@ -67,7 +68,7 @@ class Blog
      * @param Request $request
      * @return Response
      */
-    public static function random(Request $request): Response
+    public function random(Request $request): Response
     {
         $limit = $request->input('limit', 10);
         if ($limit > 20) $limit = 20;
@@ -90,7 +91,7 @@ class Blog
      * @param Request $request
      * @return Response
      */
-    public static function tags(Request $request): Response
+    public function tags(Request $request): Response
     {
         $page   = $request->input('page', 1);    // 每页显示条数
         $limit  = $request->input('limit', 100);  // 偏移量
@@ -110,3 +111,12 @@ class Blog
         return api(data: $data);
     }
 }
+
+/*
+SELECT * FROM `tags` AS `t`
+LEFT JOIN `tags` AS `a`
+ON `t`.`id` = `a`.`tag_id`
+LEFT JOIN `blogs` AS `b`
+ON `a`.`blog_id` = `b`.`id`
+WHERE `t`.`id` = 79 or `t`.`id` = 80 group by t.`blog_id`;
+ */
