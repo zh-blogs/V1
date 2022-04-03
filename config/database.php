@@ -9,7 +9,7 @@ return [
         'mysql' => [
             'driver'      => 'mysql',
             'host'        => getenv('MYSQL_HOST', '127.0.0.1'),
-            'port'        => (int)getenv('MYSQL_PORT', 3600),
+            'port'        => (int)getenv('MYSQL_PORT', 3306),
             'database'    => getenv('MYSQL_DB', 'zhblogs'),
             'username'    => getenv('MYSQL_USER', 'zhblogs'),
             'password'    => getenv('MYSQL_PASS', 'zhblogs'),
