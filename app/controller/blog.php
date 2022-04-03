@@ -75,8 +75,7 @@ class Blog
             return api(-2, 'invlid params');
         }
 
-        $sql = Db::table('blogs')->select('*')->orderBy(DB::raw('RAND()'))->limit($limit);
-        $data = $sql->get();
+        $data = Db::table('blogs')->select('*')->inRandomOrder()->take($limit)->get();
 
         foreach ($data as &$item) {
             $item->tags = implode(',', BlogHelper::getTagByBlogId($item->id));
