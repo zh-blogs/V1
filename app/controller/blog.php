@@ -84,4 +84,29 @@ class Blog
 
         return api(data: $data);
     }
+
+    /**
+     * 获取tags
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public static function tags(Request $request): Response
+    {
+        $page   = $request->input('page', 1);    // 每页显示条数
+        $limit  = $request->input('limit', 100);  // 偏移量
+
+        if (!is_numeric($page) || !is_numeric($limit)) {
+            return api(-1, 'invlid params');
+        }
+        if ($page < 1 || $limit < 1) {
+            return api(-2, 'invlid params');
+        }
+        if ($limit > 100) $limit = 100;
+
+        $sql = Db::table('tag_map')->select('*')->forPage($page, $limit);
+        $data = $sql->get();
+
+        return api(data: $data);
+    }
 }
