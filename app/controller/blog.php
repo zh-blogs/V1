@@ -18,15 +18,16 @@ class Blog
      */
     public function list(Request $request): Response
     {
-        $page   = $request->input('page', 1);  // 每页显示条数
+        $page   = $request->input('page', 1);    // 每页显示条数
         $limit  = $request->input('limit', 10);  // 偏移量
         $search = $request->input('search', ''); // 搜索关键字
+        $tag    = $request->input('tag', '');    // 标签
 
         if (!is_numeric($page) || !is_numeric($limit)) {
-            return api(-1, '参数错误');
+            return api(-1, 'invlid params');
         }
         if ($page < 1 || $limit < 1) {
-            return api(-1, '参数错误');
+            return api(-1, 'invlid params');
         }
         if ($limit > 30) $limit = 30;
 
@@ -58,5 +59,29 @@ class Blog
             'count' => $count,
             'data' => $data,
         ]);
+    }
+
+    /**
+     * 获取随机博客
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public static function random(Request $request): Response
+    {
+        $limit = $request->input('limit', 10);
+        if ($limit > 20) $limit = 20;
+        if (!is_numeric($limit) || $limit < 1) {
+            return api(-2, 'invlid params');
+        }
+
+        $sql = Db::table('blogs')->select('*')->orderBy(DB::raw('RAND()'))->limit($limit);
+        $data = $sql->get();
+
+        foreach ($data as &$item) {
+            $item->tags = implode(',', BlogHelper::getTagByBlogId($item->id));
+        }
+
+        return api(data: $data);
     }
 }
