@@ -99,12 +99,13 @@ class Blog
         if (!is_numeric($page) || !is_numeric($limit)) {
             return api(-1, 'invlid params');
         }
-        if ($page < 1 || $limit < 1) {
+        if ($page < 1) {
             return api(-2, 'invlid params');
         }
-        if ($limit > 100) $limit = 100;
-
-        $sql = Db::table('tag_map')->select('*')->forPage($page, $limit);
+        $sql = Db::table('tag_map')->select('*');
+        if ($limit > 0) {
+            $sql = $sql->forPage($page, $limit);
+        }
         $data = $sql->get();
 
         return api(data: $data);
