@@ -25,10 +25,10 @@ class Blog
         $tags   = explode(',', $tag);            // tags
 
         if (!is_numeric($page) || !is_numeric($limit)) {
-            return api(-1, 'invlid params');
+            return api(false, 'invlid params');
         }
         if ($page < 1 || $limit < 1) {
-            return api(-1, 'invlid params');
+            return api(false, 'invlid params');
         }
         if ($limit > 30) $limit = 30;
 
@@ -48,9 +48,10 @@ class Blog
         }
         $data = $sql->get();
 
-        // getTag
+        // process
         foreach ($data as &$item) {
-            $item->tags = implode(',', BlogHelper::getTagByBlogId($item->id));
+            $item->tags = BlogHelper::getTagByBlogId($item->idx);
+            $item->enabled = $item->enabled === 1 ? true : false;
         }
 
         $pages = ceil($count / $limit);
@@ -73,13 +74,14 @@ class Blog
         $limit = $request->input('limit', 10);
         if ($limit > 20) $limit = 20;
         if (!is_numeric($limit) || $limit < 1) {
-            return api(-2, 'invlid params');
+            return api(false, 'invlid params');
         }
 
         $data = Db::table('blogs')->select('*')->inRandomOrder()->take($limit)->get();
 
         foreach ($data as &$item) {
-            $item->tags = implode(',', BlogHelper::getTagByBlogId($item->id));
+            $item->tags = BlogHelper::getTagByBlogId($item->idx);
+            $item->enabled = $item->enabled === 1 ? true : false;
         }
 
         return api(data: $data);
@@ -97,10 +99,10 @@ class Blog
         $limit  = $request->input('limit', 100);  // 偏移量
 
         if (!is_numeric($page) || !is_numeric($limit)) {
-            return api(-1, 'invlid params');
+            return api(false, 'invlid params');
         }
         if ($page < 1) {
-            return api(-2, 'invlid params');
+            return api(false, 'invlid params');
         }
         $sql = Db::table('tag_map')->select('*');
         if ($limit > 0) {
