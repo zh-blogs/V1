@@ -93,22 +93,9 @@ class Blog
      * @param Request $request
      * @return Response
      */
-    public function tags(Request $request): Response
+    public function tag(Request $request): Response
     {
-        $page   = $request->input('page', 1);    // 每页显示条数
-        $limit  = $request->input('limit', 100);  // 偏移量
-
-        if (!is_numeric($page) || !is_numeric($limit)) {
-            return api(false, 'invlid params');
-        }
-        if ($page < 1) {
-            return api(false, 'invlid params');
-        }
-        $sql = Db::table('tag_map')->select('*');
-        if ($limit > 0) {
-            $sql = $sql->forPage($page, $limit);
-        }
-        $data = $sql->get();
+        $data = Db::table('tag_map')->select('*')->get();
 
         return api(data: $data);
     }
