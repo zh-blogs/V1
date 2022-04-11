@@ -4,6 +4,8 @@ namespace app\login\controller;
 
 use Webman\Http\Request;
 use Webman\Http\Response;
+use support\Db;
+use common\GithubHelper;
 
 class Github
 {
@@ -16,8 +18,8 @@ class Github
     public function index(Request $request): Response
     {
         $github_client_id = getenv('GITHUB_CLIENT_ID', '');
-        $redirect_uri = getenv('URL_FULL', '') . '/login/github/callback';
-        $url = "https://github.com/login/oauth/authorize?client_id={$github_client_id}&scope=user:email+read:user&redirect_uri={$redirect_uri}";
+        $redirect_uri = getenv('API_URL', '') . '/login/github/callback';
+        $url = "https://github.com/login/oauth/authorize?client_id={$github_client_id}&scope=read:user&redirect_uri={$redirect_uri}";
         return redirect($url, 302);
     }
 
@@ -73,6 +75,18 @@ class Github
         }
         if (!$res) return api(-1, 'invalid response');
 
-        return api(msg: 'github callback', data: $res);
+        // get github id
+        if (!isset($res['id'])) return api(-1, 'invalid github id');
+        $github_id = $res['id'];
+
+        // check user
+        $user_id = GithubHelper::getUserId($github_id);
+        if ($user_id === false) {
+            if (!GithubHelper::register($github_id)) {
+                return api(false, '注册失败');
+            }
+        }
+        $token = uniqid() . md5(sha1($user_id) . sha1($github_id));
+        return redirect(getenv('WEB_URL', '') . "/github/?token=${token}", 302);
     }
 }
