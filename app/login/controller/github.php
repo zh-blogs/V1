@@ -2,9 +2,18 @@
 
 namespace app\login\controller;
 
+use Webman\Http\Request;
+use Webman\Http\Response;
+
 class Github
 {
-    public function index()
+    /**
+     * 302 > github login
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function index(Request $request): Response
     {
         $github_client_id = getenv('GITHUB_CLIENT_ID', '');
         $redirect_uri = getenv('URL_FULL', '') . '/login/github/callback';
@@ -12,9 +21,15 @@ class Github
         return redirect($url, 302);
     }
 
-    public function callback()
+    /**
+     * github login callback
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function callback(Request $request): Response
     {
-        $code = request()->get('code');
+        $code = $request->get('code');
         if (!$code) {
             return api(-2, 'invalid code');
         }
