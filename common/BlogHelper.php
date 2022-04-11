@@ -14,7 +14,7 @@ class BlogHelper
      */
     public static function getTagByBlogId(int $blogId): array
     {
-        $tag_ids = Db::table('tags')->select('tag_id')->where('blog_id', $blogId)->get();
+        $tag_ids = Db::table('tag')->select('tag_id')->where('blog_id', $blogId)->get();
         if (!$tag_ids) return [];
 
         $tags = [];
