@@ -4,8 +4,8 @@ namespace app\login\controller;
 
 use Webman\Http\Request;
 use Webman\Http\Response;
-use support\Db;
-use common\GithubHelper;
+use support\Redis;
+use common\Helper\GithubHelper;
 
 class Github
 {
@@ -86,7 +86,9 @@ class Github
                 return api(false, '注册失败');
             }
         }
+
         $token = uniqid() . md5(sha1($user_id) . sha1($github_id));
+        Redis::setEx($token, 3600 * 24 * 7, $user_id);
         return redirect(getenv('WEB_URL', '') . "/github/?token=${token}", 302);
     }
 }

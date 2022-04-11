@@ -2,7 +2,7 @@
 
 namespace app\controller;
 
-use common\BlogHelper;
+use common\Helper\BlogHelper;
 use Webman\Http\Request;
 use Webman\Http\Response;
 use Support\Db;
