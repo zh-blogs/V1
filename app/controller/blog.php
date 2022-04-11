@@ -22,9 +22,10 @@ class Blog
         $limit  = $request->input('limit', 10);  // 偏移量
         $search = $request->input('search', ''); // 搜索关键字
 
-        $tag    = $request->input('tag', '');    // 标签
+        $tag    = $request->input('tag');    // 标签
         $tags   = explode(',', $tag);            // tags
 
+        // fittler
         if (!is_numeric($page) || !is_numeric($limit) || $page < 1 || $limit < 1) {
             return api(false, 'invlid params');
         }
@@ -47,7 +48,6 @@ class Blog
         return api(data: $data);
     }
 
-
     /**
      * 获取博客数量
      *
@@ -57,8 +57,10 @@ class Blog
     public function count(Request $request): Response
     {
         $search = $request->input('search', ''); // 搜索关键字
+
         $tag    = $request->input('tag', '');    // 标签
         $tags   = explode(',', $tag);            // tags
+
         // get count
         $countSql = Db::table('blog');
         if ($search !== '') {
@@ -109,12 +111,3 @@ class Blog
         return api(data: $data);
     }
 }
-
-/*
-SELECT * FROM `tags` AS `t`
-LEFT JOIN `tags` AS `a`
-ON `t`.`id` = `a`.`tag_id`
-LEFT JOIN `blog` AS `b`
-ON `a`.`blog_id` = `b`.`id`
-WHERE `t`.`id` = 79 or `t`.`id` = 80 group by t.`blog_id`;
- */

@@ -28,7 +28,7 @@ function api(bool $success = true, string $msg = 'ok', array|object $data = []):
  */
 function getIp(Request $request): String
 {
-    $ip = $request->header('cf-connecting-ip') ?? $request->header('x-forwarded-for');
+    $ip = $request->header('cf-connecting-ip') ?? $request->header('x-forwarded-for') ?? $request->getRealIp(true);
     if (!$ip) $ip = $request->header('x-real-ip');
     return $ip;
 }

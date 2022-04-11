@@ -1,23 +1,18 @@
 <?php
 
-namespace app\user\controller;
+namespace app\login\controller;
 
-class Login
+class Github
 {
     public function index()
     {
-        return api();
-    }
-
-    public function github()
-    {
         $github_client_id = getenv('GITHUB_CLIENT_ID', '');
-        $redirect_uri = getenv('URL_FULL', '') . '/user/login/githubCallBack';
+        $redirect_uri = getenv('URL_FULL', '') . '/login/github/callback';
         $url = "https://github.com/login/oauth/authorize?client_id={$github_client_id}&scope=user:email+read:user&redirect_uri={$redirect_uri}";
         return redirect($url, 302);
     }
 
-    public function githubCallBack()
+    public function callback()
     {
         $code = request()->get('code');
         if (!$code) {
