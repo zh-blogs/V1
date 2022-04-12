@@ -5,6 +5,7 @@ namespace app\controller;
 use Webman\Http\Response;
 use Webman\Http\Request;
 use support\Redis;
+use common\Helper\UserHelper;
 
 class Status
 {
@@ -24,14 +25,11 @@ class Status
         if ($token == '') return api(false, 'user not login');
 
         // 验证token合法性
-        $arr = Redis::hGetAll('zh:login:' . md5($token));
-        if (!$arr) {
-            return api(false, 'user not login');
-        }
-        Redis::expire('zh:login:' . md5($token), 3600 * 2);
+        $arr = UserHelper::status($token);
+        if ($arr === false) return api(false, 'user not login');
         return api(data: [
-            'role' => (int)$arr['role'] ?? -1,
-            'user_id' => (int)$arr['userid'] ?? -1,
+            'role' => (int)$arr['role'],
+            'user_id' => (int)$arr['userid'],
         ]);
     }
 }
