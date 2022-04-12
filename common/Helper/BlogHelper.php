@@ -56,9 +56,9 @@ class BlogHelper
      * @param int $blog_id
      * @return bool
      */
-    public static function checkBlogExistsByBlogId(int $blog_id): bool
+    public static function checkBlogExistsByBlogIdx(int $blog_idx): bool
     {
-        return Db::table('blog')->select('idx')->where('idx', $blog_id)->exists();
+        return Db::table('blog')->select('idx')->where('idx', $blog_idx)->exists();
     }
 
     /**
