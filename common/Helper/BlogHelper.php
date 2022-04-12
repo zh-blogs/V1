@@ -38,4 +38,28 @@ class BlogHelper
         if (!$s->name) return '';
         return $s->name;
     }
+
+    /**
+     * 通过链接判断博客是否存在
+     *
+     * @param string $blog_url
+     * @return bool
+     */
+    public static function checkBlogExists(string $blog_url): bool
+    {
+        return Db::table('blog')->select('idx')->where('url', $blog_url)->exists();
+    }
+
+    /**
+     * 创建博客唯一ID
+     * 
+     * @param string $url
+     * @return string
+     */
+    public static function createBlogId(string $url): string
+    {
+        $md5 = md5($url);
+        $id = substr($md5, 0, 4) . "-" . substr($md5, 6, 4) . "-" . substr($md5, 12, 4) . "-" . substr(md5(microtime()), 0, 4);
+        return $id;
+    }
 }

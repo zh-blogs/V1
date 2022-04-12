@@ -2,9 +2,10 @@
 
 namespace app\controller;
 
+use common\Helper\BlogHelper;
 use Webman\Http\Response;
 use Webman\Http\Request;
-use support\Redis;
+use support\Db;
 
 class Apply
 {
@@ -16,24 +17,62 @@ class Apply
      */
     public function index(Request $request): Response
     {
-        $id = '';
+        $name = $request->input('name');
+        $url = $request->input('url');
+        $sign = $request->input('sign');
+        $feed = $request->input('feed', '');
+        $tags = $request->input('tag', '');
 
+        // safe fittler
+        if ($name === null || $url === null || $sign === null) {
+            return api(false, '必填项不能为空');
+        }
+        // check is url
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return api(false, '请输入正确的b博客链接');
+        }
+
+        if (mb_strlen($name) >= 15) {
+            return api(false, '博客名称不能超过15个字符');
+        }
+        if (mb_strlen($url) >= 255 || mb_strlen($feed) >= 255) {
+            return api(false, '链接不能超过255个字符');
+        }
+        // insert sql
+
+        $url = rtrim($url, '/'); // 统一格式, 去除最右侧的 /
+        if (BlogHelper::checkBlogExists($url)) {
+            return api(false, '该博客已经存在, 请勿重复提交');
+        }
+
+        try {
+            Db::beginTransaction();
+
+            $blod_idx = Db::table('blog')->insertGetId([
+                'id' => BlogHelper::createBlogId($url),
+                'name' => $name,
+                'url' => $url,
+                'sign' => $sign,
+                'feed' => $feed,
+                'status' => '',
+                'enabled' => 0,
+            ]);
+
+            foreach (explode(',', $tags) as $tag) {
+                $tag = trim($tag);
+                if (BlogHelper::getTagNameByTagId($tag) !== '') {
+                    Db::table('tag')->insert([
+                        'tag_id' => $tag,
+                        'blog_id' => $blod_idx,
+                    ]);
+                }
+            }
+
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollBack();
+            return api(false, '提交失败');
+        }
         return api();
     }
 }
-
-/* 
- 
-    "blog": {
-        "id": "6106151d-4536-43e3-85e6-9d1a0294b2e6",
-        "name": "https://exmaple.com",
-        "url": "htt://exmaple.com",
-        "sign": "https://exmaple.com",
-        "logo": "https://exmaple.com",
-        "feed": "https://exmaple.com",
-        "status": "unknown",
-        "repeat": false,
-        "enabled": false
-        }
-    }
- */
