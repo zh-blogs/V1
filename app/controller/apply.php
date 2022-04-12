@@ -59,8 +59,7 @@ class Apply
             ]);
 
             foreach (explode(',', $tags) as $tag) {
-                $tag = trim($tag);
-                if (BlogHelper::getTagNameByTagId($tag) !== '') {
+                if (is_numeric($tag) && BlogHelper::getTagNameByTagId($tag) !== '') {
                     Db::table('tag')->insert([
                         'tag_id' => $tag,
                         'blog_id' => $blog_idx,
