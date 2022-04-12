@@ -48,7 +48,7 @@ class Apply
         try {
             Db::beginTransaction();
 
-            $blod_idx = Db::table('blog')->insertGetId([
+            $blog_idx = Db::table('blog')->insertGetId([
                 'id' => BlogHelper::createBlogId($url),
                 'name' => $name,
                 'url' => $url,
@@ -63,7 +63,7 @@ class Apply
                 if (BlogHelper::getTagNameByTagId($tag) !== '') {
                     Db::table('tag')->insert([
                         'tag_id' => $tag,
-                        'blog_id' => $blod_idx,
+                        'blog_id' => $blog_idx,
                     ]);
                 }
             }
