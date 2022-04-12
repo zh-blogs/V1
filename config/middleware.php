@@ -6,7 +6,7 @@ return [
         app\middleware\AccessControl::class,
         app\middleware\RateLimit::class,
     ],
-    "manage" => [
-        app\manage\middleware\init::class,
+    "admin" => [
+        app\admin\middleware\init::class,
     ]
 ];
