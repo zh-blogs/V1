@@ -82,13 +82,23 @@ class Github
         // check user
         $user_id = GithubHelper::getUserId($github_id);
         if ($user_id === false) {
-            if (!GithubHelper::register($github_id)) {
+            $register = GithubHelper::register($github_id);
+            if ($register === false) {
                 return api(false, '注册失败');
+            } else {
+                $user_id = $register;
             }
         }
 
-        $token = uniqid() . md5(sha1($user_id) . sha1($github_id));
-        Redis::setEx($token, 3600 * 24 * 7, $user_id);
+        $user_info = GithubHelper::getUserInfo($user_id);
+        $role = $user_info->role;
+
+        $token = uniqid() . md5($user_id) . sha1($github_id . time());
+        Redis::hMSet('login:github:' . md5($token), [
+            'user_id' => $user_id,
+            'github_id' => $github_id,
+            'role' => $role,
+        ]);
         return redirect(getenv('WEB_URL', '') . "/github/?token=${token}", 302);
     }
 }

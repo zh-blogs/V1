@@ -34,9 +34,9 @@ class GithubHelper
      * 用户注册
      *
      * @param integer $github_id
-     * @return boolean
+     * @return boolean|integer
      */
-    public static function register(int $github_id): bool
+    public static function register(int $github_id): bool|int
     {
         if (static::getUserId($github_id)) {
             return false;
@@ -62,6 +62,6 @@ class GithubHelper
             Db::rollBack();
             return false;
         }
-        return true;
+        return $user_id;
     }
 }
