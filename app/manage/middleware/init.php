@@ -4,6 +4,7 @@ namespace app\manage\middleware;
 
 use Webman\MiddlewareInterface;
 use Webman\Http\{Response, Request};
+use \support\Redis;
 
 /**
  * manage init
@@ -12,18 +13,24 @@ class Init implements MiddlewareInterface
 {
     public function process(Request $request, callable $next): Response
     {
-        $authorization  = $this->request->header('Authorization', '');
+        $authorization  = $request->header('Authorization', '');
 
-        $token = '';
-        if (preg_match('/^Bearer\s+(.*)$/', $authorization, $matches)) {
-            $token = $matches[1];
+        preg_match('/^Bearer\s+(.*)$/', $authorization, $matches);
+        $token = $matches[1] ?? '';
+
+        if ($token == '') {
+            return api(false, 'user not login');
         }
-        if ($token === '') {
-            $request->isLogin = false;
-            $request->role = '';
-            $request->userid = -1;
-            return $next($request);
+
+        // 验证token合法性
+        $arr = Redis::hGetAll('zh:login:' . md5($token));
+        if (!$arr) {
+            return api(false, 'user not login');
         }
+        $request->role = (int)$arr['role'] ?? -1;
+        $request->userid = (int)$arr['userid'] ?? -1;
+        $request->token = $token;
+        $request->redisKey = 'zh:login:' . md5($token);
 
         return $next($request);
     }

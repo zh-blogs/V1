@@ -94,11 +94,12 @@ class Github
         $role = $user_info->role;
 
         $token = uniqid() . md5($user_id) . sha1($github_id . time());
-        Redis::hMSet('login:github:' . md5($token), [
-            'user_id' => $user_id,
-            'github_id' => $github_id,
+        Redis::hMSet('zh:login:' . md5($token), [
+            'userid' => $user_id,
+            'githubid' => $github_id,
             'role' => $role,
         ]);
+        Redis::expire('zh:login:' . md5($token), 3600 * 2);
         return redirect(getenv('WEB_URL', '') . "/github/?token=${token}", 302);
     }
 }
