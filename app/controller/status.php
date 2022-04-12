@@ -8,6 +8,12 @@ use support\Redis;
 
 class Status
 {
+    /**
+     * 获取登录状态
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function index(Request $request): Response
     {
         $authorization  = $request->header('Authorization', '');
