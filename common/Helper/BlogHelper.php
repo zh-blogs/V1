@@ -51,6 +51,17 @@ class BlogHelper
     }
 
     /**
+     * 通过blog_id判断博客是否存在
+     *
+     * @param int $blog_id
+     * @return bool
+     */
+    public static function checkBlogExistsByBlogId(int $blog_id): bool
+    {
+        return Db::table('blog')->select('idx')->where('idx', $blog_id)->exists();
+    }
+
+    /**
      * 创建博客唯一ID
      * 
      * @param string $url
