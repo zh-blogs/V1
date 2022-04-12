@@ -7,7 +7,7 @@ use Webman\Http\{Response, Request};
 use \support\Redis;
 
 /**
- * manage init
+ * admin init
  */
 class Init implements MiddlewareInterface
 {
@@ -31,6 +31,10 @@ class Init implements MiddlewareInterface
         $request->userid = (int)$arr['userid'] ?? -1;
         $request->token = $token;
         $request->redisKey = 'zh:login:' . md5($token);
+
+        if ($request->role !== 1) {
+            return api(false, 'permission denied');
+        }
 
         return $next($request);
     }
