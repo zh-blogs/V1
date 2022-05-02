@@ -1,5 +1,5 @@
-# zhblogs-back-end
-中文博客列表导航后台
+# zhblogs-back-end（已弃用）
+中文博客列表导航后台。本版本根据 https://github.com/zh-blogs/blog-daohang/issues/52 进行弃用。
 
 # 部署
 
